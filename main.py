@@ -1,30 +1,53 @@
-############################################################################
-## Django ORM Standalone Python Template
-############################################################################
-""" Here we'll import the parts of Django we need. It's recommended to leave
-these settings as is, and skip to START OF APPLICATION section below """
-
-# Turn off bytecode generation
+from datetime import datetime
 import sys
+import os
+
+import django
+
+
 sys.dont_write_bytecode = True
 
-# Django specific settings
-import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
-import django
 django.setup()
 
-# Import your models for use in your script
-from db.models import *
+from db.models import Product_managers, Projects, Students 
 
-############################################################################
-## START OF APPLICATION
-############################################################################
-""" Replace the code below with your own """
+"""Закакзчик анонсирует проект"""
+Projects.objects.create(
+    name='Автоматизация формирования групповых проектов',
+    date_start=datetime.fromisoformat('2022-05-13'),
+    date_end=datetime.fromisoformat('2022-05-20'),
+)
 
-# Seed a few users in the database
-User.objects.create(name='Dan')
-User.objects.create(name='Robert')
+"""Бот проводит опрос продукт-менеджеров"""
+Product_managers.objects.create(
+    name='Игорь Суровый',
+    tg_id=54322381,
+    tg_nick='igsu',
+    time_slot=datetime.fromisoformat('2022-05-20 20:00'),
+)
 
-for u in User.objects.all():
-    print(f'ID: {u.id} \tUsername: {u.name}')
+"""Бот проводит опрос студентов"""
+Students.objects.create(
+    name='Вася Петров',
+    tg_id=35789213,
+    level=1,
+    time_slot=datetime.fromisoformat('2022-05-20 20:00'),
+
+)
+Students.objects.create(
+    name='Владимир Иванов',
+    tg_id=3578923243,
+    level=1,
+    time_slot=datetime.fromisoformat('2022-05-20 20:00'),
+
+)
+Students.objects.create(
+    name='Олеся Какаято',
+    tg_id=35789213,
+    level=1,
+    time_slot=datetime.fromisoformat('2022-05-20 20:00'),
+
+
+)
+
