@@ -1,6 +1,8 @@
 import pandas
 import datetime
 PMs = pandas.read_excel('input.xlsx', sheet_name='PMs').to_dict(orient='records')
+# читаем из excel и сохраняем в dict
+
 Commands = pandas.read_excel('input.xlsx', sheet_name='Commands')
 
 
