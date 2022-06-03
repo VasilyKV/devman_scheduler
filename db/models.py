@@ -1,22 +1,35 @@
 from django.db import models
 
 
-class Product_managers(models.Model):
-    name = models.CharField(max_length=50)
-    tg_id = models.BigIntegerField
-    time_slot = models.DateTimeField
+
+class ProductManagers(models.Model):
+    pm_name = models.CharField(max_length=50)
+    pm_tg_id = models.IntegerField()
+    pm_tg_username = models.CharField(max_length=50)
+    start_work_time = models.DateTimeField()
+    end_work_time = models.DateTimeField()
 
 
 class Students(models.Model):
-    name = models.CharField(max_lenth=50)
-    tg_id = models.BigIntegerField
-    level = models.IntegerField
-    time_slot = models.DateTimeField
+    std_name = models.CharField(max_length=50)
+    std_tg_id = models.IntegerField()
+    std_tg_username = models.CharField(max_length=50)
+    level = models.CharField(max_length=50)
+    wanted_time = models.JSONField()
+
+
+class Projects(models.Model):
+    project_name = models.TextField()
+    project_start_date = models.DateTimeField()
+    project_end_date = models.DateTimeField()
 
 
 class Teams(models.Model):
-    team_id = models.TextField
-    pm = models.ForeignKey(Product_managers, on_delete=None) # pm=Product_managers.name
-    students = models.JSONField()  # В это поле кладем JSON с учениками
-    time = models.ForeignKey(Students, on_delete=None)
-    level = models.ForeignKey(Students, on_delete=None)
+    team_name = models.TextField()
+    pm_name = models.ForeignKey(ProductManagers, on_delete=models.CASCADE)
+    students = models.JSONField()
+    time_slot = models.DateTimeField()
+    team_level = models.CharField(max_length=50)
+    team_chat_username = models.CharField(max_length=50)
+    project = models.ForeignKey(Projects, on_delete=models.CASCADE)
+
