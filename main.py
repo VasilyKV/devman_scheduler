@@ -45,7 +45,6 @@ def fill_students_db(json_file: str) -> None:
             std_tg_id=student['std_tg_id'],
             std_tg_username=student['std_tg_username'],
             level=student['level'],
-            wanted_time=student['wanted_time']
         )
 
 
@@ -57,11 +56,24 @@ def fill_pm_db(json_file: str) -> None:
             pm_name=product_manager['pm_name'],
             pm_tg_id=product_manager['pm_tg_id'],
             pm_tg_username=product_manager['pm_tg_username'],
-            start_work_time=datetime.fromisoformat(product_manager['start_work_time']),
-            end_work_time=datetime.fromisoformat(product_manager['end_work_time'])
         )
 
 
-fill_pm_db("pm.json")
-fill_students_db("students.json")
-fill_projects_db("projects.json")
+def update_pm_db(pm_tg_username: str, work_time_splitted: list[str]) -> None:
+    product_manager = ProductManagers.objects.get(pm_tg_username=pm_tg_username)
+    product_manager.start_work_time = datetime.fromisoformat(work_time_splitted[0])
+    product_manager.end_work_time = datetime.fromisoformat(work_time_splitted[1])
+    product_manager.save()
+
+
+"""
+update_pm_db(
+    pm_tg_username="@vsmir", 
+    work_time_splitted=["2019-03-02 20:00", "2019-03-02 22:00"]
+)
+"""
+
+# fill_pm_db("pm.json")
+# fill_students_db("students.json")
+# fill_projects_db("projects.json")
+
