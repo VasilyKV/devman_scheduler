@@ -5,6 +5,7 @@
 from datetime import datetime
 import os
 import sys
+import json
 
 import django
 
@@ -24,62 +25,43 @@ from db.models import *
 """
 
 
-"""Заказчик анонсирует проект"""
-Projects.objects.create(
-    project_name='Автоматизация формирования групповых проектов',
-    project_start_date=datetime.fromisoformat('2022-05-13'),
-    project_end_date=datetime.fromisoformat('2022-05-20')
-)
+def fill_projects_db(json_file: str) -> None:
+    with open(json_file) as data:
+        projects = json.load(data)
+    for project in projects:
+        Projects.objects.create(
+            project_name=project['project_name'],
+            project_start_date=datetime.fromisoformat(project['project_start_date']),
+            project_end_date=datetime.fromisoformat(project['project_end_date'])
+        )
 
 
-"""Бот проводит опрос продукт-менеджеров"""
-ProductManagers.objects.create(
-    pm_name='Игорь Суровый',
-    pm_tg_id=54322381,
-    pm_tg_username='@igsu',
-    start_work_time=datetime.fromisoformat('2022-05-13 20:00'),
-    end_work_time=datetime.fromisoformat('2022-05-13 22:00')
-)
+def fill_students_db(json_file: str) -> None:
+    with open(json_file) as data:
+        students = json.load(data)
+    for student in students:
+        Students.objects.create(
+            std_name=student['std_name'],
+            std_tg_id=student['std_tg_id'],
+            std_tg_username=student['std_tg_username'],
+            level=student['level'],
+            wanted_time=student['wanted_time']
+        )
 
 
-ProductManagers.objects.create(
-    pm_name='Василий Смирнов',
-    pm_tg_id=5432238123423,
-    pm_tg_username='@vsmir',
-    start_work_time=datetime.fromisoformat('2022-05-13 18:00'),
-    end_work_time=datetime.fromisoformat('2022-05-13 21:00')
-)
+def fill_pm_db(json_file: str) -> None:
+    with open(json_file) as data:
+        product_managers = json.load(data)
+    for product_manager in product_managers:
+        ProductManagers.objects.create(
+            pm_name=product_manager['pm_name'],
+            pm_tg_id=product_manager['pm_tg_id'],
+            pm_tg_username=product_manager['pm_tg_username'],
+            start_work_time=datetime.fromisoformat(product_manager['start_work_time']),
+            end_work_time=datetime.fromisoformat(product_manager['end_work_time'])
+        )
 
 
-ProductManagers.objects.create(
-    pm_name='Петр Непервый',
-    pm_tg_id=54322342345111,
-    pm_tg_username='@1petr',
-    start_work_time=datetime.fromisoformat('2022-05-13 17:00'),
-    end_work_time=datetime.fromisoformat('2022-05-13 20:00')
-)
-
-
-"""
-Бот проводит опрос студентов
-Students.objects.create(
-    name='Вася Петров',
-    tg_id=35789213,
-    level=1,
-    time_slot=datetime.fromisoformat('2022-05-20 20:00'),
-
-)
-Students.objects.create(
-    name='Владимир Иванов',
-    tg_id=3578923243,
-    level=1,
-    time_slot=datetime.fromisoformat('2022-05-20 20:00'),
-
-)
-Students.objects.create(
-    name='Олеся Какаято',
-    tg_id=35789213,
-    level=1,
-    time_slot=datetime.fromisoformat('2022-05-20 20:00'),
-)
-"""
+fill_pm_db("pm.json")
+fill_students_db("students.json")
+fill_projects_db("projects.json")
