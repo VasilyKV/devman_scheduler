@@ -1,0 +1,16 @@
+[
+    {
+        "pm_name": "Илья Смурной",
+        "pm_tg_id": 21414243111,
+        "pm_tg_username": "@vsmir",
+        "start_work_time": "2022-05-13 20:00",
+        "end_work_time": "2022-05-13 20:30"
+    },
+    {
+        "pm_name": "Иван Добрый",
+        "pm_tg_id": 12343423432432,
+        "pm_tg_username": "@dobi",
+        "start_work_time": "2022-05-13 18:00",
+        "end_work_time": "2022-05-13 19:00"
+    }
+]
