@@ -4,7 +4,7 @@ from django.db import models
 
 class ProductManagers(models.Model):
     pm_name = models.CharField(max_length=50)
-    pm_tg_id = models.IntegerField()
+    pm_tg_id = models.IntegerField(null=True)
     pm_tg_username = models.CharField(max_length=50)
     start_work_time = models.DateTimeField(null=True)
     end_work_time = models.DateTimeField(null=True)
@@ -12,7 +12,7 @@ class ProductManagers(models.Model):
 
 class Students(models.Model):
     std_name = models.CharField(max_length=50)
-    std_tg_id = models.IntegerField()
+    std_tg_id = models.IntegerField(null=True)
     std_tg_username = models.CharField(max_length=50)
     level = models.CharField(max_length=50)
     wanted_time = models.JSONField(null=True)

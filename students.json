@@ -1,55 +1,67 @@
 [
     {
-        "std_name": "Василий  Белый",
-        "std_tg_id": 21414123,
-        "std_tg_username": "@vs",
-        "level": "junior",
-        "wanted_time":
-            [
-                "2022-05-13 20:00",
-                "2022-05-13 20:30",
-                "2022-05-13 21:00",
-                "2022-05-13 21:30"
-            ]
+		"name": "Василий  Белый",
+		"level": "junior",
+		"tg_username": "@vs"
     },
     {
-        "std_name": "Иван Иванов",
-        "std_tg_id": 123434432,
-        "std_tg_username": "@iivan",
-        "level": "junior",
-        "wanted_time":
-            [
-                "2022-05-13 18:00",
-                "2022-05-13 19:00",
-                "2022-05-13 21:00",
-                "2022-05-13 21:30"
-            ]
+		"name": "Иван Иванов",
+		"level": "junior",
+		"tg_username": "@iivan"
     },
     {
-        "std_name": "Лена Чернова",
-        "std_tg_id": 214124398067,
-        "std_tg_username": "@lenach",
-        "level": "junior",
-        "wanted_time":
-            [
-                "2022-05-13 18:00",
-                "2022-05-13 18:30",
-                "2022-05-13 21:00",
-                "2022-05-13 22:00"
-            ]
+		"name": "Лена Чернова",
+		"level": "junior",
+		"tg_username": "@lenach"
     },
     {
-        "std_name": "Денис Веселый",
-        "std_tg_id": 214142431113445553,
-        "std_tg_username": "@dvess",
-        "level": "novice+",
-        "wanted_time":
-            [
-                "2022-05-13 18:00",
-                "2022-05-13 18:30",
-                "2022-05-13 21:30",
-                "2022-05-13 22:00"
-
-            ]
-    }
+		"name": "Денис Веселый",
+		"level": "novice+",
+		"tg_username": "@dvess"
+    },
+    {
+		"name": "Антон Семенов ",
+		"level": "novice",
+		"tg_username": "@anton"
+    },
+    {
+		"name": "Семен Клубков",
+		"level": "novice",
+		"tg_username": "@semen"
+    },
+    {
+		"name": "Армен Хачатурян",
+		"level": "novice+",
+		"tg_username": "@armen"
+    },
+    {
+		"name": "Андрей Холопенко",
+		"level": "novice+",
+		"tg_username": "@holop"
+    },
+    {
+		"name": "Мария Шварц",
+		"level": "novice",
+		"tg_username": "@masha"
+    },
+    {
+		"name": "Егор Смирнов",
+		"level": "novice",
+		"tg_username": "@egor"
+    },
+    {
+		"name": "Александр Онучин",
+		"level": "junior",
+		"tg_username": "@onuch"
+    },
+    {
+		"name": "Анна Кружкова",
+		"level": "junior",
+		"tg_username": "@krug"
+    },
+    {
+		"name": "Марат Босиев",
+		"level": "novice+",
+		"tg_username": "@marat"
+    }	
 ]
