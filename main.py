@@ -9,6 +9,7 @@ import sys
 import json
 
 import django
+from django.db.models import Q
 
 
 
@@ -88,7 +89,7 @@ def fill_teams_db():
     index = 1
     product_managers = ProductManagers.objects.all()
     for product_manager in product_managers:
-        time_slots = get_time_slots(product_manager.start_work_time, product_manager.end_work_time, 20)
+        time_slots = get_time_slots(product_manager.start_work_time, product_manager.end_work_time, 30)
         for time_slot in time_slots:
             Teams.objects.create(
                 team_name=f'#{index}',
@@ -97,7 +98,27 @@ def fill_teams_db():
             )
             index += 1
 
-fill_teams_db()
+
+def get_free_slots(tg_username): # При отсутствии студента в списке, надо сформировать исключение и послать боту 
+    free_slots = []
+    try:
+        student = Students.objects.get(std_tg_username=tg_username)
+    except Students.DoesNotExist:
+        print ("Student isn't in the database yet")
+        return free_slots
+
+    teams_sorted = Teams.objects.filter(Q(team_level=None) | Q(team_level=student.level)).order_by('time_slot')
+    if teams_sorted:
+        time_slot = datetime.datetime.strptime('00:00','%H:%M')
+        for team in teams_sorted:
+            if team.students: 
+                team_incomplited = len(team.students) < 3
+            else:
+                team_incomplited = True
+            if (team.time_slot != time_slot) & team_incomplited:
+                time_slot = team.time_slot
+                free_slots.append(time_slot.strftime('%H:%M'))
+    return free_slots
 
 
 def set_work_time_pm_db(): #Тестовая функция, заполняет поля времени в pm_db ,данные берет из доп поля  pm.json
@@ -119,6 +140,9 @@ def set_work_time_pm_db(): #Тестовая функция, заполняет 
 
 #set_work_time_pm_db()
 
+#fill_teams_db()
+#print(get_free_slots('@onuch'))
+
 # Students.objects.create(
 #     std_name='Новый герой',
 #     std_tg_id='777',
@@ -135,3 +159,8 @@ def set_work_time_pm_db(): #Тестовая функция, заполняет 
 #     time_slot=a
 # )
 # a = datetime.datetime.strptime('18:30','%H:%M')
+
+# team.team_level='novice+'
+# team.students=['Сидоров']
+# team.students.append('Сидоров_3')
+# team.save()
