@@ -57,11 +57,13 @@ def fill_pm_db(json_file: str) -> None:
             pm_tg_username=product_manager['tg_username']
         )
 
+
 def conver_in_datetime(work_time: str): #format 18:20-20:00
     work_time_list = work_time.split('-')
     work_time_list[0] = datetime.datetime.strptime(work_time_list[0],'%H:%M')
     work_time_list[1] = datetime.datetime.strptime(work_time_list[1],'%H:%M')
     return work_time_list
+
 
 def update_pm_db(pm_tg_username: str, pm_tg_id: int, work_time: str) -> None:
     work_time_splitted = conver_in_datetime(work_time)
@@ -72,9 +74,33 @@ def update_pm_db(pm_tg_username: str, pm_tg_id: int, work_time: str) -> None:
     product_manager.save()
 
 
-#Тестовая функция, заполняет поля времени в pm_db ,данные берет из доп поля  pm.json
+def get_time_slots(start_period, end_period, slot_duration):
+    time_slots = []
+    slot = start_period
+    timedelta = datetime.timedelta(minutes=slot_duration)
+    while slot + timedelta <= end_period:
+        time_slots.append(slot)
+        slot += timedelta
+    return (time_slots)
 
-def set_work_time_pm_db():
+
+def fill_teams_db():
+    index = 1
+    product_managers = ProductManagers.objects.all()
+    for product_manager in product_managers:
+        time_slots = get_time_slots(product_manager.start_work_time, product_manager.end_work_time, 20)
+        for time_slot in time_slots:
+            Teams.objects.create(
+                team_name=f'#{index}',
+                pm_name=product_manager,
+                time_slot=time_slot
+            )
+            index += 1
+
+fill_teams_db()
+
+
+def set_work_time_pm_db(): #Тестовая функция, заполняет поля времени в pm_db ,данные берет из доп поля  pm.json
     with open("pm.json", encoding='utf-8') as data:
         product_managers = json.load(data)
     for product_manager_json in product_managers:
@@ -85,16 +111,13 @@ def set_work_time_pm_db():
         product_manager_db.save()
 
 
-
-
-
 #fill_pm_db("pm.json")
 #fill_students_db("students.json")
 #fill_projects_db("projects.json")
 
 #update_pm_db('@vsmir',123,'18:20-20:20')
 
-set_work_time_pm_db()
+#set_work_time_pm_db()
 
 # Students.objects.create(
 #     std_name='Новый герой',
@@ -103,4 +126,12 @@ set_work_time_pm_db()
 #     level='junior',
 #     wanted_time = ['18:30','20:30','21:30']
 # )
-
+# pm = ProductManagers.objects.all()[2]
+# print(pm)
+# a = datetime.datetime.strptime('18:30','%H:%M')
+# Teams.objects.create(
+#     team_name='Новая команда2',
+#     pm_name=pm,
+#     time_slot=a
+# )
+# a = datetime.datetime.strptime('18:30','%H:%M')

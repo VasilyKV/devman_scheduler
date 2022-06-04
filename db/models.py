@@ -27,9 +27,9 @@ class Projects(models.Model):
 class Teams(models.Model):
     team_name = models.TextField()
     pm_name = models.ForeignKey(ProductManagers, on_delete=models.CASCADE)
-    students = models.JSONField()
-    time_slot = models.DateTimeField(null=True)
-    team_level = models.CharField(max_length=50)
-    team_chat_username = models.CharField(max_length=50)
-    project = models.ForeignKey(Projects, on_delete=models.CASCADE)
+    students = models.JSONField(null=True)
+    time_slot = models.DateTimeField()
+    team_level = models.CharField(max_length=50, null=True)
+    team_chat_username = models.CharField(max_length=50, null=True)
+    project = models.ForeignKey(Projects, on_delete=models.CASCADE, null=True)
 
