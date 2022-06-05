@@ -12,7 +12,6 @@ import django
 from django.db.models import Q
 
 
-
 sys.dont_write_bytecode = True
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
@@ -33,8 +32,10 @@ def fill_projects_db(json_file: str) -> None:
     for project in projects:
         Projects.objects.create(
             project_name=project['project_name'],
-            project_start_date=datetime.fromisoformat(project['project_start_date']),
-            project_end_date=datetime.fromisoformat(project['project_end_date'])
+            project_start_date=datetime.fromisoformat(
+                project['project_start_date']),
+            project_end_date=datetime.fromisoformat(
+                project['project_end_date'])
         )
 
 
@@ -59,29 +60,31 @@ def fill_pm_db(json_file: str) -> None:
         )
 
 
-def range_conver_in_datetime(work_time: str): #format 18:20-20:00
+def range_conver_in_datetime(work_time: str):  # format 18:20-20:00
     work_time_list = work_time.split('-')
-    work_time_list[0] = datetime.datetime.strptime(work_time_list[0],'%H:%M')
-    work_time_list[1] = datetime.datetime.strptime(work_time_list[1],'%H:%M')
+    work_time_list[0] = datetime.datetime.strptime(work_time_list[0], '%H:%M')
+    work_time_list[1] = datetime.datetime.strptime(work_time_list[1], '%H:%M')
     return work_time_list
 
-def time_slots_conver_in_datetime(time_slots): #format [18:20, 20:00]
-    time_slots_datetime =[]
+
+def time_slots_conver_in_datetime(time_slots):  # format [18:20, 20:00]
+    time_slots_datetime = []
     for slot in time_slots:
-        time_slots_datetime.append(datetime.datetime.strptime(slot,'%H:%M'))
+        time_slots_datetime.append(datetime.datetime.strptime(slot, '%H:%M'))
     return time_slots_datetime
 
 
 def update_pm_db(pm_tg_username: str, pm_tg_id: int, work_time: str) -> None:
     try:
-        product_manager = ProductManagers.objects.get(pm_tg_username=pm_tg_username)
+        product_manager = ProductManagers.objects.get(
+            pm_tg_username=pm_tg_username)
     except ProductManagers.DoesNotExist:
-        print ("product_manager isn't in the database yet")
+        print("product_manager isn't in the database yet")
         return
     work_time_splitted = range_conver_in_datetime(work_time)
     product_manager.start_work_time = work_time_splitted[0]
     product_manager.end_work_time = work_time_splitted[1]
-    product_manager.pm_tg_id = pm_tg_id # возможно integer не хватит
+    product_manager.pm_tg_id = pm_tg_id  # возможно integer не хватит
     product_manager.save()
 
 
@@ -92,14 +95,15 @@ def get_time_slots(start_period, end_period, slot_duration):
     while slot + timedelta <= end_period:
         time_slots.append(slot)
         slot += timedelta
-    return (time_slots) 
+    return (time_slots)
 
 
 def fill_teams_db():
     index = 1
     product_managers = ProductManagers.objects.all()
     for product_manager in product_managers:
-        time_slots = get_time_slots(product_manager.start_work_time, product_manager.end_work_time, 30)
+        time_slots = get_time_slots(
+            product_manager.start_work_time, product_manager.end_work_time, 30)
         for time_slot in time_slots:
             Teams.objects.create(
                 team_name=f'#{index}',
@@ -109,62 +113,77 @@ def fill_teams_db():
             index += 1
 
 
-def get_free_slots(tg_username): # При отсутствии студента в списке, надо сформировать исключение и послать боту 
+def get_free_slots(tg_username):
     free_slots = []
     try:
         student = Students.objects.get(std_tg_username=tg_username)
     except Students.DoesNotExist:
-        print ("Student isn't in the database yet")
+        print("Student isn't in the database yet")
         return free_slots
 
-    teams_sorted = Teams.objects.filter(Q(team_level=None) | Q(team_level=student.level)).order_by('time_slot')
+    teams_sorted = Teams.objects.filter(Q(team_level=None) | Q(
+        team_level=student.level)).order_by('time_slot')
     if teams_sorted:
-        time_slot = datetime.datetime.strptime('00:00','%H:%M')
+        time_slot = datetime.datetime.strptime('00:00', '%H:%M')
         for team in teams_sorted:
-            if team.students: 
-                team_incomplited = len(team.students) < 3
+            if team.students_name:
+                team_incomplited = len(team.students_name) < 3
             else:
                 team_incomplited = True
             if (team.time_slot != time_slot) & team_incomplited:
                 time_slot = team.time_slot
                 free_slots.append(time_slot.strftime('%H:%M'))
-    return free_slots #format [18:20, 20:00]
+    return free_slots  # format [18:20, 20:00]
 
 
 def update_students_db(tg_username: str, tg_id: int, time_slots):
     try:
         student = Students.objects.get(std_tg_username=tg_username)
     except Students.DoesNotExist:
-        print ("Student isn't in the database yet")
-    student.std_tg_id = tg_id # возможно integer не хватит
+        print("Student isn't in the database yet")
+    student.std_tg_id = tg_id  # возможно integer не хватит
     student.wanted_time = time_slots
     student.save()
 
-slots = ['19:00', '19:30', '21:00']
-update_students_db('@semen', 5555, slots)
 
-
-def set_work_time_pm_db(): #Тестовая функция, заполняет поля времени в pm_db ,данные берет из доп поля  pm.json
+def set_work_time_pm_db():  # Тестовая функция, заполняет поля времени в pm_db ,данные берет из доп поля  pm.json
     with open("pm.json", encoding='utf-8') as data:
         product_managers = json.load(data)
     for product_manager_json in product_managers:
-        work_time_splitted = conver_in_datetime(product_manager_json['work_time'])
-        product_manager_db = ProductManagers.objects.get(pm_name=product_manager_json['name'])
+        work_time_splitted = range_conver_in_datetime(
+            product_manager_json['work_time'])
+        product_manager_db = ProductManagers.objects.get(
+            pm_name=product_manager_json['name'])
         product_manager_db.start_work_time = work_time_splitted[0]
         product_manager_db.end_work_time = work_time_splitted[1]
         product_manager_db.save()
 
 
+def set_work_time_student_db():  # Тестовая функция, заполняет поля времени в Students_db ,данные берет из доп поля  students.json
+    with open("students.json", encoding='utf-8') as data:
+        students = json.load(data)    
+    for student_json in students[:6]:
+        work_time_splitted = range_conver_in_datetime(student_json['work_time'])
+        time_slots = get_time_slots(work_time_splitted[0], work_time_splitted[1], 30)
+        student_db = Students.objects.get(std_name=student_json['name'])
+        student_slots = []
+        for slot in time_slots:
+            student_slots.append(slot.strftime('%H:%M'))
+        student_db.wanted_time = student_slots
+        student_db.save()
+
+        
 #fill_pm_db("pm.json")
 #fill_students_db("students.json")
 #fill_projects_db("projects.json")
 
-#update_pm_db('@vsmir',333,'19:00-20:20')
+# update_pm_db('@vsmir',333,'19:00-20:20')
 
 #set_work_time_pm_db()
-
+#set_work_time_student_db()
 #fill_teams_db()
-#print(get_free_slots('@onuch'))
+
+# print(get_free_slots('@onuch'))
 
 # Students.objects.create(
 #     std_name='Новый герой',
@@ -184,6 +203,9 @@ def set_work_time_pm_db(): #Тестовая функция, заполняет 
 # a = datetime.datetime.strptime('18:30','%H:%M')
 
 # team.team_level='novice+'
-# team.students=['Сидоров']
-# team.students.append('Сидоров_3')
+# team.students_name=['Сидоров']
+# team.students_name.append('Сидоров_3')
 # team.save()
+
+# slots = ['19:00', '19:30', '21:00']
+# update_students_db('@semen', 5555, slots)

@@ -2,27 +2,32 @@
     {
 		"name": "Василий  Белый",
 		"level": "junior",
-		"tg_username": "@vs"
+		"tg_username": "@vs",
+		"work_time": "18:00-20:30"
     },
     {
 		"name": "Иван Иванов",
 		"level": "junior",
-		"tg_username": "@iivan"
+		"tg_username": "@iivan",
+		"work_time": "18:00-20:30"
     },
     {
 		"name": "Лена Чернова",
 		"level": "junior",
-		"tg_username": "@lenach"
+		"tg_username": "@lenach",
+		"work_time": "18:00-20:30"
     },
     {
 		"name": "Денис Веселый",
 		"level": "novice+",
-		"tg_username": "@dvess"
+		"tg_username": "@dvess",
+		"work_time": "20:00-20:30"
     },
     {
 		"name": "Антон Семенов ",
 		"level": "novice",
-		"tg_username": "@anton"
+		"tg_username": "@anton",
+		"work_time": "20:00-20:30"
     },
     {
 		"name": "Семен Клубков",
