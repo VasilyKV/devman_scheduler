@@ -67,8 +67,12 @@ def conver_in_datetime(work_time: str): #format 18:20-20:00
 
 
 def update_pm_db(pm_tg_username: str, pm_tg_id: int, work_time: str) -> None:
+    try:
+        product_manager = ProductManagers.objects.get(pm_tg_username=pm_tg_username)
+    except ProductManagers.DoesNotExist:
+        print ("product_manager isn't in the database yet")
+        return
     work_time_splitted = conver_in_datetime(work_time)
-    product_manager = ProductManagers.objects.get(pm_tg_username=pm_tg_username)
     product_manager.start_work_time = work_time_splitted[0]
     product_manager.end_work_time = work_time_splitted[1]
     product_manager.pm_tg_id = pm_tg_id # возможно integer не хватит
@@ -136,7 +140,7 @@ def set_work_time_pm_db(): #Тестовая функция, заполняет 
 #fill_students_db("students.json")
 #fill_projects_db("projects.json")
 
-#update_pm_db('@vsmir',123,'18:20-20:20')
+#update_pm_db('@vsmir',333,'19:00-20:20')
 
 #set_work_time_pm_db()
 
