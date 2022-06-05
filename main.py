@@ -59,11 +59,17 @@ def fill_pm_db(json_file: str) -> None:
         )
 
 
-def conver_in_datetime(work_time: str): #format 18:20-20:00
+def range_conver_in_datetime(work_time: str): #format 18:20-20:00
     work_time_list = work_time.split('-')
     work_time_list[0] = datetime.datetime.strptime(work_time_list[0],'%H:%M')
     work_time_list[1] = datetime.datetime.strptime(work_time_list[1],'%H:%M')
     return work_time_list
+
+def time_slots_conver_in_datetime(time_slots): #format [18:20, 20:00]
+    time_slots_datetime =[]
+    for slot in time_slots:
+        time_slots_datetime.append(datetime.datetime.strptime(slot,'%H:%M'))
+    return time_slots_datetime
 
 
 def update_pm_db(pm_tg_username: str, pm_tg_id: int, work_time: str) -> None:
@@ -72,7 +78,7 @@ def update_pm_db(pm_tg_username: str, pm_tg_id: int, work_time: str) -> None:
     except ProductManagers.DoesNotExist:
         print ("product_manager isn't in the database yet")
         return
-    work_time_splitted = conver_in_datetime(work_time)
+    work_time_splitted = range_conver_in_datetime(work_time)
     product_manager.start_work_time = work_time_splitted[0]
     product_manager.end_work_time = work_time_splitted[1]
     product_manager.pm_tg_id = pm_tg_id # возможно integer не хватит
@@ -86,7 +92,7 @@ def get_time_slots(start_period, end_period, slot_duration):
     while slot + timedelta <= end_period:
         time_slots.append(slot)
         slot += timedelta
-    return (time_slots)
+    return (time_slots) 
 
 
 def fill_teams_db():
@@ -122,7 +128,20 @@ def get_free_slots(tg_username): # При отсутствии студента 
             if (team.time_slot != time_slot) & team_incomplited:
                 time_slot = team.time_slot
                 free_slots.append(time_slot.strftime('%H:%M'))
-    return free_slots
+    return free_slots #format [18:20, 20:00]
+
+
+def update_students_db(tg_username: str, tg_id: int, time_slots):
+    try:
+        student = Students.objects.get(std_tg_username=tg_username)
+    except Students.DoesNotExist:
+        print ("Student isn't in the database yet")
+    student.std_tg_id = tg_id # возможно integer не хватит
+    student.wanted_time = time_slots
+    student.save()
+
+slots = ['19:00', '19:30', '21:00']
+update_students_db('@semen', 5555, slots)
 
 
 def set_work_time_pm_db(): #Тестовая функция, заполняет поля времени в pm_db ,данные берет из доп поля  pm.json
