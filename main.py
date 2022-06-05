@@ -93,7 +93,7 @@ def range_convetr_to_slots_list(time_range):
         return(list_slots)
 
 
-def update_pm_db(pm_tg_username: str, pm_tg_id: int, work_time: str) -> None:
+def update_pm_db(pm_tg_username: str, pm_tg_id: str, work_time: str) -> None:
     try:
         product_manager = ProductManagers.objects.get(
             pm_tg_username=pm_tg_username)
@@ -145,7 +145,7 @@ def get_free_slots(tg_username):
     return free_slots  # format [18:20, 20:00]
 
 
-def update_students_db(tg_username: str, tg_id: int, time_slots):
+def update_students_db(tg_username: str, tg_id: str, time_slots):
     try:
         student = Students.objects.get(std_tg_username=tg_username)
     except Students.DoesNotExist:
@@ -182,15 +182,15 @@ def set_work_time_student_db():  # Тестовая функция, заполн
 
 
 
-#fill_pm_db("pm.json")
-#fill_students_db("students.json")
+# fill_pm_db("pm.json")
+# fill_students_db("students.json")
 #fill_projects_db("projects.json")
 
 # update_pm_db('@vsmir',333,'19:00-20:20')
 
-#set_work_time_pm_db()
-#set_work_time_student_db()
-#fill_teams_db()
+# set_work_time_pm_db()
+# set_work_time_student_db()
+fill_teams_db()
 
 # print(get_free_slots('@onuch'))
 
@@ -218,3 +218,10 @@ def set_work_time_student_db():  # Тестовая функция, заполн
 
 # slots = ['19:00', '19:30', '21:00']
 # update_students_db('@semen', 5555, '18:30-20:30')
+
+# a = Students.objects.all()
+# print(a[6].wanted_time)
+# # b = ['20:00']
+# students_sorted = Students.objects.filter(wanted_time__isnull=True)
+# print(students_sorted)
+# # # my_field__iexact="{}"
