@@ -10,6 +10,7 @@ import json
 
 import django
 from django.db.models import Q
+from django.db.models.functions import Length
 
 
 sys.dont_write_bytecode = True
@@ -166,9 +167,8 @@ def update_teams_db():
                 team_incomplited = (len(team.students_name) < 3)
             else:
                 team_incomplited = True
-            print(student.std_name,team.team_name, team_incomplited, team.team_level, student.level)
             if ((team.team_level == None) or (team.team_level == student.level)) & team_incomplited:
-                print('-',student.std_name,team.team_name, team_incomplited, team.team_level, student.level)
+                print('Команда подходит',team.team_name, student.std_name, team.team_level, student.level)
                 for slot in student.wanted_time:
                     if slot == team.time_slot.strftime('%H:%M'):
                         student.team_id = team
@@ -177,8 +177,27 @@ def update_teams_db():
                             team.students_name.append(student.std_name)
                         else:
                             team.students_name = [student.std_name]
+                        print('Слот студента подходит',team.team_name, student.std_name, slot )
                         student.save()
                         team.save()
+                        for student_ in students_sorted: # если нашли подходящую команду, надо попробовать ее заполнить всю, тут нужна рекурсия
+                            if team.students_name:
+                                team_incomplited = (len(team.students_name) < 3)
+                            else:
+                                team_incomplited = True
+                            if student_.team_id or team_incomplited == False: continue
+                            if team.team_level == student_.level:
+                                print('Студент подходит команде',team.team_name, student.std_name, team.team_level, student.level)
+                                for slot_ in student_.wanted_time:
+                                    if slot_ == team.time_slot.strftime('%H:%M'):
+                                        student_.team_id = team
+                                        team.students_name.append(student_.std_name)
+                                        student_.save()
+                                        team.save()
+                                        print('Слот студента подходит внутренни цикл',team.team_name, student_.std_name, slot )
+                                        break
+
+
                         break
 
 
@@ -205,11 +224,11 @@ def set_work_time_student_db():  # Тестовая функция, заполн
 
 # -------Рабочие функции------
 
-#fill_pm_db("pm.json")
-#fill_students_db("students.json")
+# fill_pm_db("pm.json")
+# fill_students_db("students.json")
 #fill_projects_db("projects.json")
-#fill_teams_db()
-#update_teams_db()
+# fill_teams_db()
+# update_teams_db()
 
 #--------Тестовые функции-----
 # set_work_time_pm_db()
