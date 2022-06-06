@@ -103,7 +103,7 @@ def update_pm_db(pm_tg_username: str, pm_tg_id: str, work_time: str) -> None:
     work_time_splitted = range_conver_in_datetime(work_time)
     product_manager.start_work_time = work_time_splitted[0]
     product_manager.end_work_time = work_time_splitted[1]
-    product_manager.pm_tg_id = pm_tg_id  # возможно integer не хватит
+    product_manager.pm_tg_id = pm_tg_id
     product_manager.save()
 
 
@@ -150,10 +150,36 @@ def update_students_db(tg_username: str, tg_id: str, time_slots):
         student = Students.objects.get(std_tg_username=tg_username)
     except Students.DoesNotExist:
         print("Student isn't in the database yet")
-    student.std_tg_id = tg_id  # возможно integer не хватит
+    student.std_tg_id = tg_id
     # student.wanted_time = time_slots # Это строчка должна работать когда приходит список слотов
     student.wanted_time = range_convetr_to_slots_list(time_slots)
     student.save()
+
+
+def update_teams_db():
+    students_sorted = Students.objects.filter(team_id=None, wanted_time__isnull=False).order_by(Length('wanted_time').asc())
+    teams_sorted = Teams.objects.order_by('time_slot')
+    for student in students_sorted:
+        for team in teams_sorted:
+            if student.team_id: break
+            if team.students_name:
+                team_incomplited = (len(team.students_name) < 3)
+            else:
+                team_incomplited = True
+            print(student.std_name,team.team_name, team_incomplited, team.team_level, student.level)
+            if ((team.team_level == None) or (team.team_level == student.level)) & team_incomplited:
+                print('-',student.std_name,team.team_name, team_incomplited, team.team_level, student.level)
+                for slot in student.wanted_time:
+                    if slot == team.time_slot.strftime('%H:%M'):
+                        student.team_id = team
+                        team.team_level = student.level                    
+                        if team.students_name:
+                            team.students_name.append(student.std_name)
+                        else:
+                            team.students_name = [student.std_name]
+                        student.save()
+                        team.save()
+                        break
 
 
 def set_work_time_pm_db():  # Тестовая функция, заполняет поля времени в pm_db ,данные берет из доп поля  pm.json
@@ -172,27 +198,26 @@ def set_work_time_pm_db():  # Тестовая функция, заполняе�
 def set_work_time_student_db():  # Тестовая функция, заполняет поля времени в Students_db ,данные берет из доп поля  students.json
     with open("students.json", encoding='utf-8') as data:
         students = json.load(data)    
-    for student_json in students[:6]:
+    for student_json in students:
         student_db = Students.objects.get(std_name=student_json['name'])
         student_db.wanted_time = range_convetr_to_slots_list(student_json['work_time'])
         student_db.save()
 
+# -------Рабочие функции------
 
-      
-
-
-
-# fill_pm_db("pm.json")
-# fill_students_db("students.json")
+#fill_pm_db("pm.json")
+#fill_students_db("students.json")
 #fill_projects_db("projects.json")
+#fill_teams_db()
+#update_teams_db()
 
-# update_pm_db('@vsmir',333,'19:00-20:20')
-
+#--------Тестовые функции-----
 # set_work_time_pm_db()
 # set_work_time_student_db()
-fill_teams_db()
+# update_pm_db('@vsmir',333,'19:00-20:20')
+# update_students_db('@masha', 5555, '18:30-20:30')
 
-# print(get_free_slots('@onuch'))
+#--------Мусор для отладки-----
 
 # Students.objects.create(
 #     std_name='Новый герой',
@@ -217,11 +242,8 @@ fill_teams_db()
 # team.save()
 
 # slots = ['19:00', '19:30', '21:00']
-# update_students_db('@semen', 5555, '18:30-20:30')
 
-# a = Students.objects.all()
-# print(a[6].wanted_time)
-# # b = ['20:00']
-# students_sorted = Students.objects.filter(wanted_time__isnull=True)
-# print(students_sorted)
-# # # my_field__iexact="{}"
+
+# teams = Teams.objects.all()
+# for team in teams:
+#     print(team.team_name, team.team_level,team.time_slot, team.students_name)

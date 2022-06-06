@@ -9,13 +9,13 @@
 		"name": "Иван Иванов",
 		"level": "junior",
 		"tg_username": "@iivan",
-		"work_time": "18:00-20:30"
+		"work_time": "18:30-20:30"
     },
     {
 		"name": "Лена Чернова",
 		"level": "junior",
 		"tg_username": "@lenach",
-		"work_time": "18:00-20:30"
+		"work_time": "20:00-20:30"
     },
     {
 		"name": "Денис Веселый",
@@ -27,22 +27,25 @@
 		"name": "Антон Семенов ",
 		"level": "novice",
 		"tg_username": "@anton",
-		"work_time": "20:00-20:30"
+		"work_time": "19:00-20:30"
     },
     {
 		"name": "Семен Клубков",
 		"level": "novice",
-		"tg_username": "@semen"
+		"tg_username": "@semen",
+		"work_time": "19:00-20:30"
     },
     {
 		"name": "Армен Хачатурян",
 		"level": "novice+",
-		"tg_username": "@armen"
+		"tg_username": "@armen",
+		"work_time": "18:00-20:30"
     },
     {
 		"name": "Андрей Холопенко",
 		"level": "novice+",
-		"tg_username": "@holop"
+		"tg_username": "@holop",
+		"work_time": "18:00-19:00"
     },
     {
 		"name": "Мария Шварц",
