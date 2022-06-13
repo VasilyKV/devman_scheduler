@@ -157,9 +157,8 @@ def update_students_db(tg_username: str, tg_id: str, time_slots):
     student.save()
 
 
-def update_teams_db():
+def update_teams_db_algorithm(teams_sorted):
     students_sorted = Students.objects.filter(team_id=None, wanted_time__isnull=False).order_by(Length('wanted_time').asc())
-    teams_sorted = Teams.objects.order_by('time_slot')
     for student in students_sorted:
         for team in teams_sorted:
             if student.team_id: break
@@ -174,24 +173,21 @@ def update_teams_db():
                         student.team_id = team
                         team.team_level = student.level                    
                         if team.students_name:
-                            team.students_name.append(student.std_name)
+                            team.students_name.append(student.std_tg_username)
                         else:
-                            team.students_name = [student.std_name]
+                            team.students_name = [student.std_tg_username]
                         print('Слот студента подходит',team.team_name, student.std_name, slot )
                         student.save()
                         team.save()
                         for student_ in students_sorted: # если нашли подходящую команду, надо попробовать ее заполнить всю, тут нужна рекурсия
-                            if team.students_name:
-                                team_incomplited = (len(team.students_name) < 3)
-                            else:
-                                team_incomplited = True
-                            if student_.team_id or team_incomplited == False: continue
+                            if (len(team.students_name) >= 3): break
+                            if student_.team_id: continue
                             if team.team_level == student_.level:
                                 print('Студент подходит команде',team.team_name, student.std_name, team.team_level, student.level)
                                 for slot_ in student_.wanted_time:
                                     if slot_ == team.time_slot.strftime('%H:%M'):
                                         student_.team_id = team
-                                        team.students_name.append(student_.std_name)
+                                        team.students_name.append(student_.std_tg_username)
                                         student_.save()
                                         team.save()
                                         print('Слот студента подходит внутренни цикл',team.team_name, student_.std_name, slot )
@@ -199,6 +195,13 @@ def update_teams_db():
 
 
                         break
+
+
+def update_teams_db():
+    teams_sorted = Teams.objects.filter(students_name__isnull=False).order_by('time_slot')
+    update_teams_db_algorithm(teams_sorted)
+    teams_sorted = Teams.objects.filter(students_name__isnull=True).order_by('time_slot')
+    update_teams_db_algorithm(teams_sorted)
 
 
 def set_work_time_pm_db():  # Тестовая функция, заполняет поля времени в pm_db ,данные берет из доп поля  pm.json
@@ -222,47 +225,18 @@ def set_work_time_student_db():  # Тестовая функция, заполн
         student_db.wanted_time = range_convetr_to_slots_list(student_json['work_time'])
         student_db.save()
 
+
 # -------Рабочие функции------
 
 # fill_pm_db("pm.json")
 # fill_students_db("students.json")
-#fill_projects_db("projects.json")
+# fill_projects_db("projects.json")
 # fill_teams_db()
 # update_teams_db()
+
 
 #--------Тестовые функции-----
 # set_work_time_pm_db()
 # set_work_time_student_db()
 # update_pm_db('@vsmir',333,'19:00-20:20')
 # update_students_db('@masha', 5555, '18:30-20:30')
-
-#--------Мусор для отладки-----
-
-# Students.objects.create(
-#     std_name='Новый герой',
-#     std_tg_id='777',
-#     std_tg_username='@Новый герой',
-#     level='junior',
-#     wanted_time = ['18:30','20:30','21:30']
-# )
-# pm = ProductManagers.objects.all()[2]
-# print(pm)
-# a = datetime.datetime.strptime('18:30','%H:%M')
-# Teams.objects.create(
-#     team_name='Новая команда2',
-#     pm_name=pm,
-#     time_slot=a
-# )
-# a = datetime.datetime.strptime('18:30','%H:%M')
-
-# team.team_level='novice+'
-# team.students_name=['Сидоров']
-# team.students_name.append('Сидоров_3')
-# team.save()
-
-# slots = ['19:00', '19:30', '21:00']
-
-
-# teams = Teams.objects.all()
-# for team in teams:
-#     print(team.team_name, team.team_level,team.time_slot, team.students_name)
